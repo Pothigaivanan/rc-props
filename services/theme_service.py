@@ -6,25 +6,36 @@ class ThemeService:
         self.is_available = True
         self.list_of_themes = []
         
-    def add_theme(self,theme_name, category, price ):
+    def _validate_theme(self, theme_name):
         if theme_name is None:
-            raise ValueError ("Name cannot be None")
+            raise ValueError("Theme name cannot be empty")
         if not isinstance(theme_name, str):
-            raise ValueError("The name must be string")
+            raise ValueError("Theme name must be string")
         if not theme_name.strip():
-            raise ValueError("The theme name cannot be empty or just whitspace")
-        if not isinstance(price,(int,float)):
-            raise ValueError("The value must be a number (int or float)")
+            raise ValueError("Theme name cannot be empty or just whitspace ")
+        
+    def _validate_category(self, category):
         if category is None:
             raise ValueError("Category cannot be empty")
         if not isinstance(category, str):
-            raise ValueError("Category must be string")
+            raise ValueError("Category must be a string")
         if not category.strip():
-            raise ValueError("The theme name cannot be empty or just whitspace")
-        if price < 0:
-            raise ValueError ("Values cannot be negative")
+            raise ValueError("Category cannot be empty or just whitspace")
+        
+    def _validate_price(self,price):
+        if price is None:
+            raise ValueError("Price cannot be empty")
+        if not isinstance(price,(int,float)):
+            raise ValueError("Category must be a number or float")
+        if price < 0 :
+            raise ValueError("Price cannot be negative value")
         if price < 500:
-            raise ValueError("Price can't less than 500")
+            raise ValueError("Price cannot be less than 500")
+        
+    def add_theme(self,theme_name, category, price ):
+        self._validate_theme(theme_name)
+        self._validate_category(category)
+        self._validate_price(price)
         for i in self.list_of_themes:
             if i["theme_name"] == theme_name.strip():
                 raise DuplicateThemeError("Duplicate item")
@@ -35,9 +46,10 @@ class ThemeService:
         return self.list_of_themes
     
     def get_theme_by_category(self,category):
+        self._validate_category(category)
         list_of_category = []
         for i in self.list_of_themes:
-            if i["category"] == category:
+            if i["category"].strip().casefold() == category.strip().casefold():
                 list_of_category.append(i)
         return list_of_category
     

@@ -37,6 +37,11 @@ def test_list_of_theme(theme_service):
    assert result[0]["theme_name"] == "Little Teddy"
    assert result[0]["category"] == "Funny"
    assert result[0]["price"] == 1450
+
+def test_get_empty_list_of_theme():
+    a = ThemeService()
+    result = a.get_all_themes()
+    assert result == []
    
 def test_get_theme_by_category(theme_service):
     theme_service.add_theme(theme_name="Little Teddy", category="Funny", price=1500)
@@ -58,3 +63,14 @@ def test_get_theme_by_category(theme_service):
     assert result_2[0]["theme_name"] == "Forest Grump"
     assert result_2[0]["category"] == "Adventure"
     assert result_2[0]["price"] == 1650
+    
+    
+@pytest.mark.parametrize("category",[None, "", " ", 123])
+def test_get_theme_invalid_input(theme_service,category):
+    with pytest.raises(ValueError):
+        theme_service.get_theme_by_category(category)
+        
+def test_category_not_present_in_list():
+    a = ThemeService()
+    result = a.get_theme_by_category("Birthday")
+    assert result == []
